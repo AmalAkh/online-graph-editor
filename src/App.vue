@@ -11,7 +11,9 @@ const currentElement = ref("");
 
 function startMovingPanel(e)
 {
+  
   isPanelMoving.value = true;
+
 }
 function stopMovingPanel(e)
 {
@@ -21,12 +23,22 @@ function movePanel(e)
 {
   if(isPanelMoving.value)
   {
-    
-    let diffX = (dragElement.value.getBoundingClientRect().x - panel.value.getBoundingClientRect().x);
-    let diffY = (dragElement.value.getBoundingClientRect().y-panel.value.getBoundingClientRect().y);
    
-    panelX.value = e.clientX-diffX;
-    panelY.value = e.clientY-diffY - dragElement.value.offsetWidth;
+    let dragElementRect = dragElement.value.getBoundingClientRect();
+    let panelRect = panel.value.getBoundingClientRect();
+    let diffX = (dragElementRect.x - panelRect.x);
+    let diffY = (dragElementRect.y - panelRect.y);
+    let resultX = e.clientX-diffX;
+    let resultY = e.clientY-diffY - dragElement.value.offsetWidth;
+    if(resultX >= 0 && resultX+panelRect.width <= document.documentElement.clientWidth)
+    {
+      panelX.value = e.clientX-diffX;
+    }
+    if(resultY >= 0 && resultY+panelRect.height <= document.documentElement.clientHeight)
+    {
+      panelY.value = resultY;
+    }
+    
     
   }
 }

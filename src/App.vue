@@ -1,11 +1,13 @@
 <script setup>
 import { ref } from 'vue';
 
-const panelX = ref(100);
-const panelY = ref(100)
+const panelX = ref(10);
+const panelY = ref(10)
 const panel = ref(null);
 const dragElement = ref(null);
 const isPanelMoving = ref(false);
+
+const currentElement = ref("");
 
 function startMovingPanel(e)
 {
@@ -31,7 +33,7 @@ function movePanel(e)
 </script>
 
 <template>
-  <div @mousemove="movePanel" @mouseup="stopMovingPanel">
+  <div style="width:100%;" @mousemove="movePanel" @mouseup="stopMovingPanel">
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>

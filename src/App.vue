@@ -1,5 +1,7 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
+import availableElements from './abstractions/available-elements';
+import Vertice from './abstractions/vertice';
 
 const panelX = ref(10);
 const panelY = ref(10)
@@ -7,8 +9,13 @@ const panel = ref(null);
 const dragElement = ref(null);
 const isPanelMoving = ref(false);
 
-const currentElement = ref("");
 
+
+const currentElements = reactive([]);
+onMounted(()=>
+{
+  currentElements.push(new Vertice(100,100));
+})
 function startMovingPanel(e)
 {
   
@@ -42,10 +49,16 @@ function movePanel(e)
     
   }
 }
+const newElementName = ref("Vertice");
+const editingMode = ref("");
+function addElement(e)
+{
+  currentElements.push(new Vertice(e.clientX, e.clientY));
+}
 </script>
 
 <template>
-  <div style="width:100%;" @mousemove="movePanel" @mouseup="stopMovingPanel">
+  <div style="width:100%;" @mousemove="movePanel" @mouseup="stopMovingPanel" @click="addElement">
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>
@@ -62,11 +75,11 @@ function movePanel(e)
           
         </p>
         
-        <a class="panel-block">
+        <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':newElementName == key}" @click="newElementName=key">
           <span class="panel-icon">
-            <font-awesome-icon icon="circle" />
+            <font-awesome-icon :icon="el.icon" />
           </span>
-          Vertice
+          {{ el.label }}
         </a>
       
         
@@ -80,7 +93,10 @@ function movePanel(e)
           </button>
         </div>
       </nav>
-      <svg></svg>
+      <svg>
+        <component v-for="element in currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
+       
+      </svg>
   </div>
 </template>
 

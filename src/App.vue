@@ -42,10 +42,23 @@ function movePanel(e)
     if(resultX >= 0 && resultX+panelRect.width <= document.documentElement.clientWidth)
     {
       panelX.value = e.clientX-diffX;
+    }else if(resultX <= 0)
+    {
+      panelX.value = 0;
+    }else
+    {
+      panelX.value = document.documentElement.clientWidth-panelRect.width;
     }
+
     if(resultY >= 0 && resultY+panelRect.height <= document.documentElement.clientHeight)
     {
       panelY.value = resultY;
+    }else if(resultY <= 0)
+    {
+      panelY.value = 0;
+    }else
+    {
+      panelY.value = document.documentElement.clientHeight-panelRect.width;
     }
     
     
@@ -55,18 +68,19 @@ const newElementName = ref("Vertice");
 const editingMode = ref("");
 function addElement(e)
 {
+  console.log(e);
   currentElements.push(new Vertice(e.clientX, e.clientY));
 }
 </script>
 
 <template>
-  <div style="width:100%;" @mousemove="movePanel" @mouseup="stopMovingPanel" @click="addElement">
+  <div style="width:100%;" @mousemove.stop="movePanel" @mouseup.stop="stopMovingPanel">
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>
-          {{ editorDataStore.selectedElement?.id }}
+          test
           </p>
-          <span ref="dragElement" class="drag-element" @dragstart="test" @mousemove="movePanel" @mousedown="startMovingPanel" >
+          <span ref="dragElement" class="drag-element" @dragstart="test"  @mousedown.stop="startMovingPanel" >
             <font-awesome-icon icon="grip-vertical" />
           </span>
         </div>
@@ -95,7 +109,7 @@ function addElement(e)
           </button>
         </div>
       </nav>
-      <svg>
+      <svg @click="addElement">
         <component v-for="element in currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
        
       </svg>

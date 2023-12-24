@@ -13,6 +13,9 @@
 }
 .instruments-panel
   {
+    -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none;
     background-color: white;
     position: absolute;
     top:10px;

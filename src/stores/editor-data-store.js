@@ -1,8 +1,8 @@
-/*import { defineStore } from "pinia";
+import { defineStore } from "pinia";
 
-const editorDataStore = defineStore("editor-data-store", 
+let useEditorDataStore = defineStore("editor-data-store", 
 {
-    staet:()=>({selectedElement});
+    state:()=>({selectedElement:null, editingMode:"", newElementName:""})
 });
 
-export default editorDataStore;*/
+export default useEditorDataStore;

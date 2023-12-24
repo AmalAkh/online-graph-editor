@@ -3,18 +3,20 @@ import { onMounted, reactive, ref } from 'vue';
 import availableElements from './abstractions/available-elements';
 import Vertice from './abstractions/vertice';
 
+import useEditorDataStore from './stores/editor-data-store';
+
 const panelX = ref(10);
 const panelY = ref(10)
 const panel = ref(null);
 const dragElement = ref(null);
 const isPanelMoving = ref(false);
 
-
+const editorDataStore = useEditorDataStore();
 
 const currentElements = reactive([]);
 onMounted(()=>
 {
-  currentElements.push(new Vertice(100,100));
+  
 })
 function startMovingPanel(e)
 {
@@ -62,7 +64,7 @@ function addElement(e)
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>
-          Repositories
+          {{ editorDataStore.selectedElement?.id }}
           </p>
           <span ref="dragElement" class="drag-element" @dragstart="test" @mousemove="movePanel" @mousedown="startMovingPanel" >
             <font-awesome-icon icon="grip-vertical" />

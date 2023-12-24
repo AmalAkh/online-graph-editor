@@ -1,24 +1,28 @@
 <script setup>
 import { computed, ref } from 'vue';
+import useEditorDataStore from './../stores/editor-data-store';
 
-defineProps({
+const editorDataStore = useEditorDataStore();
+
+const props = defineProps({
     element:
     {
         type:Object
     }
 });
 
-const selected = ref(false);
+
 function select(e)
 {
-    selected.value = !selected.value;
+    editorDataStore.$patch({selectedElement:props.element});
 }
-const strokeWidth = computed(() =>
- {
-    return selected.value ? 3 : 0;
- })
+function getStrokeWidth()
+{
+    
+    return editorDataStore.selectedElement?.id == props.element.id ? 3 : 0;
+}
 
 </script>
 <template>
-    <circle @click.stop="select" :cx="element.x" :cy="element.y" stroke="red" :stroke-width="strokeWidth" r="8"  fill="black" />
+    <circle @click.stop="select" :cx="element.x" :cy="element.y" stroke="red" :stroke-width="getStrokeWidth()" r="8"  fill="black" />
 </template>

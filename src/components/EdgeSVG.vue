@@ -14,15 +14,16 @@ const props = defineProps({
 
 function select(e)
 {
+   
     editorDataStore.$patch({selectedElement:props.element});
 }
-function getStrokeWidth()
+function getStrokeColor()
 {
     
-    return editorDataStore.selectedElement?.id == props.element.id ? 3 : 0;
+    return editorDataStore.selectedElement?.id == props.element.id ? 'blue' : 'black';
 }
 
 </script>
 <template>
-    <circle @click.stop="select" :cx="element.x" :cy="element.y" stroke="red" :stroke-width="getStrokeWidth()" r="8"  fill="black" />
+    <line @click.stop="select" :x1="element.x[0]" :y1="element.y[0]" :x2="element.x[1]" :y2="element.y[1]" :style="{stroke:getStrokeColor(), strokeWidth:3}" />
 </template>

@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import availableElements from './abstractions/available-elements';
-import Vertice from './abstractions/vertice';
+
+import Vertex from './abstractions/vertex';
 
 import useEditorDataStore from './stores/editor-data-store';
 
@@ -13,7 +14,7 @@ const isPanelMoving = ref(false);
 
 const editorDataStore = useEditorDataStore();
 
-const currentElements = reactive([]);
+
 onMounted(()=>
 {
   
@@ -64,12 +65,33 @@ function movePanel(e)
     
   }
 }
-const newElementName = ref("Vertice");
-const editingMode = ref("");
+
+function selectNewElement(name)
+{
+  editorDataStore.selectedElement = null;
+  editorDataStore.selectedElement2 = null;
+  editorDataStore.newElementName = name;
+}
 function addElement(e)
 {
-  console.log(e);
-  currentElements.push(new Vertice(e.clientX, e.clientY));
+  if(editorDataStore.newElementName == "edge")
+  {
+    editorDataStore.newElementName = "";
+    
+  }
+  
+  editorDataStore.selectedElement = null;
+  
+  switch(editorDataStore.newElementName)
+  {
+    case "Vertex":
+      editorDataStore.$patch({currentElements:[...editorDataStore.currentElements, new Vertex(e.clientX, e.clientY)]});
+    break;
+    case "Edge":
+      
+    break;
+  }
+  
 }
 </script>
 
@@ -91,7 +113,7 @@ function addElement(e)
           
         </p>
         
-        <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':newElementName == key}" @click="newElementName=key">
+        <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':editorDataStore.newElementName == key}" @click="editorDataStore.newElementName=key">
           <span class="panel-icon">
             <font-awesome-icon :icon="el.icon" />
           </span>
@@ -110,8 +132,9 @@ function addElement(e)
         </div>
       </nav>
       <svg @click="addElement">
-        <component v-for="element in currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
-       
+
+        <component v-for="element in editorDataStore.currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
+        
       </svg>
   </div>
 </template>

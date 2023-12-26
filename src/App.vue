@@ -28,9 +28,18 @@ function startMovingPanel(e)
 function stopMovingPanel(e)
 {
   isPanelMoving.value = false;
+  
+
 }
 function movePanel(e)
 {
+  console.log("move_panel");
+
+  if(editorDataStore.draggingMode == "edge")
+  {
+    editorDataStore.selectedElement.bezierPointX = e.clientX;
+    editorDataStore.selectedElement.bezierPointY = e.clientY;
+  }
   if(isPanelMoving.value)
   {
    
@@ -68,35 +77,45 @@ function movePanel(e)
 
 function selectNewElement(name)
 {
+  console.log("new element sleected");
+  editorDataStore.draggingMode = "new_element";
   editorDataStore.selectedElement = null;
-  editorDataStore.selectedElement2 = null;
+  
   editorDataStore.newElementName = name;
 }
 function addElement(e)
 {
+  
   if(editorDataStore.newElementName == "edge")
   {
     editorDataStore.newElementName = "";
     
   }
   
-  editorDataStore.selectedElement = null;
-  
-  switch(editorDataStore.newElementName)
+  if(editorDataStore.draggingMode == "new_element")
   {
-    case "Vertex":
-      editorDataStore.$patch({currentElements:[...editorDataStore.currentElements, new Vertex(e.clientX, e.clientY)]});
-    break;
-    case "Edge":
-      
-    break;
+    switch(editorDataStore.newElementName)
+    {
+      case "Vertex":
+        editorDataStore.$patch({currentElements:[...editorDataStore.currentElements, new Vertex(e.clientX, e.clientY)]});
+      break;
+      case "Edge":
+        
+      break;
+    }
+  }else if(editorDataStore.draggingMode != "edge")
+  {
+    editorDataStore.selectedElement = null;
+  }else
+  {
+    editorDataStore.draggingMode = "";
   }
   
 }
 </script>
 
 <template>
-  <div style="width:100%;" @mousemove.stop="movePanel" @mouseup.stop="stopMovingPanel">
+  <div style="width:100%;" @mousemove.stop="movePanel" @mouseup.prevent.stop="stopMovingPanel">
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>
@@ -113,7 +132,7 @@ function addElement(e)
           
         </p>
         
-        <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':editorDataStore.newElementName == key}" @click="editorDataStore.newElementName=key">
+        <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':editorDataStore.newElementName == key}" @click="selectNewElement(key)">
           <span class="panel-icon">
             <font-awesome-icon :icon="el.icon" />
           </span>

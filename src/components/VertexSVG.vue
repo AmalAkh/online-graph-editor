@@ -20,7 +20,7 @@ function select(e)
         let edge = new Edge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
         edge.start = editorDataStore.selectedElement;
         edge.end = props.element;
-        editorDataStore.currentElements.push(edge);
+        editorDataStore.currentElements.unshift(edge);
         editorDataStore.selectedElement.addConnection(props.element.id, edge);
         props.element.addConnection(editorDataStore.selectedElement.id, edge);
         

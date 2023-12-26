@@ -5,6 +5,7 @@ export default class Edge extends GraphElement
     constructor(x1,y1,x2,y2)
     {
         super("Edge",[x1,x2],[y1,y2], "EdgeSVG");
-        
+        this.bezierPointX = (x1+x2)/2;
+        this.bezierPointY = (y1+y2)/2;
     }
 }

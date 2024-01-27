@@ -93,8 +93,8 @@ function getPosition(x,y)
 }
 
 const svgCanvas = ref(null);
-const editorWidth = ref(800);
-const editorHeight = ref(1500);
+const editorWidth = ref(400);
+const editorHeight = ref(400);
 function addElement(e)
 {
   
@@ -168,6 +168,12 @@ function addElement(e)
           </button>
         </div>
       </nav>
+      <div class="size-panel">
+        <input class="input is-small" type="number" v-model="editorWidth"/>
+        x
+        <input class="input is-small" type="number" v-model="editorHeight"/>
+
+      </div>
       <div class="zoom-panel">
         <button class="button" @click.stop="editorDataStore.zoomout">-</button>
         <p>{{ editorDataStore.editorZoom }}%</p>

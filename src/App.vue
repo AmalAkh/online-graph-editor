@@ -12,12 +12,15 @@ const panel = ref(null);
 const dragElement = ref(null);
 const isPanelMoving = ref(false);
 
+const appInner = ref(null);
+
 const editorDataStore = useEditorDataStore();
 
 
 onMounted(()=>
 {
-  
+    editorDataStore.currentEditorHeight = document.documentElement.clientHeight;
+    editorDataStore.currentEditorWidth = document.documentElement.clientWidth;
 })
 function startMovingPanel(e)
 {
@@ -83,21 +86,36 @@ function selectNewElement(name)
   
   editorDataStore.newElementName = name;
 }
+//get absolute position without effect of zooming
+function getPosition(x,y)
+{
+  return [(x+appInner.value.scrollLeft)/editorDataStore.zoom, y];
+}
+
+const svgCanvas = ref(null);
+const editorWidth = ref(800);
+const editorHeight = ref(1500);
 function addElement(e)
 {
   
   if(editorDataStore.newElementName == "edge")
   {
+    //if it is edge cant add to empty space
     editorDataStore.newElementName = "";
     
   }
   
   if(editorDataStore.draggingMode == "new_element")
   {
+    //adding new element
     switch(editorDataStore.newElementName)
     {
       case "Vertex":
-        editorDataStore.$patch({currentElements:[...editorDataStore.currentElements, new Vertex(e.clientX, e.clientY)]});
+        let box = svgCanvas.value.getBoundingClientRect();
+        console.log(`${e.clientX} ${box.x}`);
+        let x = (e.clientX - box.x)/editorDataStore.zoom;
+        let y = (e.clientY - box.y)/editorDataStore.zoom;
+        editorDataStore.$patch({currentElements:[...editorDataStore.currentElements, new Vertex(x, y)]});
       break;
       case "Edge":
         
@@ -115,7 +133,7 @@ function addElement(e)
 </script>
 
 <template>
-  <div style="width:100%;" @mousemove.stop="movePanel" @mouseup.prevent.stop="stopMovingPanel">
+  <div ref="appInner" class="app-inner" style="width:100%;" @mousemove.stop="movePanel" @mouseup.prevent.stop="stopMovingPanel">
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>
@@ -150,7 +168,12 @@ function addElement(e)
           </button>
         </div>
       </nav>
-      <svg @click="addElement">
+      <div class="zoom-panel">
+        <button class="button" @click.stop="editorDataStore.zoomout">-</button>
+        <p>{{ editorDataStore.editorZoom }}%</p>
+        <button class="button" @click.stop="editorDataStore.zoomin">+</button>
+      </div>
+      <svg class="main-canvas" ref="svgCanvas" :height="editorHeight*editorDataStore.zoom" :width="editorWidth*editorDataStore.zoom" @click="addElement">
 
         <component v-for="element in editorDataStore.currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
         
@@ -159,5 +182,5 @@ function addElement(e)
 </template>
 
 <style scoped>
-
+  
 </style>

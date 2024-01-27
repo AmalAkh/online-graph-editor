@@ -44,5 +44,5 @@ function getStrokeWidth()
 
 </script>
 <template>
-    <circle @click.stop="select" :cx="element.x" :cy="element.y" stroke="red" :stroke-width="getStrokeWidth()" r="8"  fill="black" />
+    <circle @click.stop="select" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="8*editorDataStore.zoom"  fill="black" />
 </template>

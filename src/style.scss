@@ -1,3 +1,8 @@
+$control-radius-small:0.5rem;
+
+@import "bulma/bulma.sass";
+
+
 html,body
 {
     height:100%;
@@ -5,4 +10,8 @@ html,body
 html
 {
     overflow: hidden;
+}
+.button
+{
+    border-radius: 0.5rem !important;
 }

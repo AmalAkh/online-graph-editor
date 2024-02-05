@@ -62,7 +62,7 @@ const bezierPointY = computed(()=>
 <template>
     
     
-    <path class="edge" :class="{'selected':editorDataStore.selectedElement?.id == props.element.id}"  @click.stop="select"  :d="`M ${element.x[0]*editorDataStore.zoom} ${element.y[0]*editorDataStore.zoom} Q ${element.bezierPointX*editorDataStore.zoom} ${element.bezierPointY*editorDataStore.zoom} ${element.x[1]*editorDataStore.zoom} ${element.y[1]*editorDataStore.zoom}`" :stroke-width="5*editorDataStore.zoom" fill="none" />
+    <path class="edge" stroke="black" :class="{'selected':editorDataStore.selectedElement?.id == props.element.id}"  @click.stop="select"  :d="`M ${element.x[0]*editorDataStore.zoom} ${element.y[0]*editorDataStore.zoom} Q ${element.bezierPointX*editorDataStore.zoom} ${element.bezierPointY*editorDataStore.zoom} ${element.x[1]*editorDataStore.zoom} ${element.y[1]*editorDataStore.zoom}`" :stroke-width="5*editorDataStore.zoom" fill="none" />
     <circle class="bezier-point" :class="{'active':editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == 'edge'}" @mousedown="startMovingBezierPoint" v-show="editorDataStore.selectedElement?.id == element.id"  :cx="bezierPointX" :cy="bezierPointY" stroke="gray"  r="7"  fill="white" />
 </template>
 <style lang="scss" scoped>

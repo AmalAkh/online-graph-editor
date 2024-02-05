@@ -6,22 +6,20 @@ import Vertex from './abstractions/vertex';
 
 import useEditorDataStore from './stores/editor-data-store';
 
+import downloadByDataURL from './utils/download-by-data-url.js';
+import castElements from './utils/cast-elements.js';
+
 const panelX = ref(10);
 const panelY = ref(10)
 const panel = ref(null);
 const dragElement = ref(null);
 const isPanelMoving = ref(false);
 
-const appInner = ref(null);
+const currentTab = ref("file");
+
 
 const editorDataStore = useEditorDataStore();
 
-
-onMounted(()=>
-{
-    editorDataStore.currentEditorHeight = document.documentElement.clientHeight;
-    editorDataStore.currentEditorWidth = document.documentElement.clientWidth;
-})
 function startMovingPanel(e)
 {
   
@@ -36,7 +34,7 @@ function stopMovingPanel(e)
 }
 function movePanel(e)
 {
-  console.log("move_panel");
+  
 
   if(editorDataStore.draggingMode == "edge")
   {
@@ -78,15 +76,23 @@ function movePanel(e)
   }
 }
 
+onMounted(()=>
+{
+    editorDataStore.currentEditorHeight = document.documentElement.clientHeight;
+    editorDataStore.currentEditorWidth = document.documentElement.clientWidth;
+})
+
+
 function selectNewElement(name)
 {
-  console.log("new element sleected");
+
   editorDataStore.draggingMode = "new_element";
   editorDataStore.selectedElement = null;
   
   editorDataStore.newElementName = name;
 }
 //get absolute position without effect of zooming
+const appInner = ref(null);
 function getPosition(x,y)
 {
   return [(x+appInner.value.scrollLeft)/editorDataStore.zoom, y];
@@ -112,7 +118,7 @@ function addElement(e)
     {
       case "Vertex":
         let box = svgCanvas.value.getBoundingClientRect();
-        console.log(`${e.clientX} ${box.x}`);
+     
         let x = (e.clientX - box.x)/editorDataStore.zoom;
         let y = (e.clientY - box.y)/editorDataStore.zoom;
         editorDataStore.$patch({currentElements:[...editorDataStore.currentElements, new Vertex(x, y)]});
@@ -130,6 +136,106 @@ function addElement(e)
   }
   
 }
+
+const canvasForSave = ref(null);
+
+const size = ref(1);
+const filename = ref("mygraph");
+
+
+function saveAsImage()
+{
+  
+  let context = canvasForSave.value.getContext("2d");
+
+  //get svg xml
+  let svgXML = svgCanvas.value.outerHTML;
+  console.log(svgXML);
+  let blob = new Blob([svgXML], {type:"image/svg+xml"});
+
+  //create an image to draw it on canvas
+  let img = new Image();
+  let temp = editorDataStore.zoom;
+
+  //apply zoom 
+  editorDataStore.zoom = size.value;
+  editorDataStore.selectedElement = null;
+  //hide the svg to prevent user from seeing temporary sized up version of svg
+  svgCanvas.value.style.display = "none";
+  let blobUrl = URL.createObjectURL(blob);
+  img.onload = function()
+  {
+
+    context.drawImage(img,0,0, editorWidth.value*size.value,editorHeight.value*size.value);
+    
+    downloadByDataURL(canvasForSave.value.toDataURL(), filename.value);
+    //return the old value of zoom and make svg visible again
+    editorDataStore.zoom = temp;
+    svgCanvas.value.style.display = "block";
+    URL.revokeObjectURL(blobUrl);
+
+
+  }
+  
+  img.src = blobUrl;
+
+
+  
+}
+
+function saveAsJson()
+{
+  let confObj = {canvasWidth:editorWidth.value, canvasHeight:editorHeight.value,elements:editorDataStore.currentElements}
+  let blob = new Blob([JSON.stringify(confObj)], {type:"application/json"});
+  downloadByDataURL(URL.createObjectURL(blob), filename.value);
+}
+
+
+const requiredFields = ["canvasWidth", "canvasHeight", "elements"]
+function addConnection(vertexId, edge)
+    {
+        if(this.connectedVertices.has(vertexId))
+        {
+            
+            this.connectedVertices.set(vertexId, [...this.connectedVertices.get(vertexId), edge]);
+        }else
+        {
+            this.connectedVertices.set(vertexId, [edge]);
+        }
+    }
+function open(e)
+{
+  
+  if(e.target.files[0] != undefined)
+  {
+    let reader = new FileReader();
+    reader.onload = (e)=>
+    {
+        let confObj = JSON.parse(reader.result);
+        for(let key of requiredFields)
+        {
+          
+          if(!confObj.hasOwnProperty(key))
+          {
+            alert("Error occured");
+            return;
+          
+          }
+        }
+        
+        
+
+        editorHeight.value = confObj.canvasHeight;
+        editorWidth.value = confObj.canvasWidth;
+        editorDataStore.currentElements = castElements(confObj.elements);
+    };  
+    reader.readAsText(e.target.files[0]);
+    
+
+  }
+  
+  
+}
 </script>
 
 <template>
@@ -145,28 +251,44 @@ function addElement(e)
         </div>
         
         <p class="panel-tabs">
-          <a class="is-active">Elements</a>
-          <a>Algorithms</a>
+          <a :class="{'is-active':currentTab=='file'}" @click="currentTab='file'" >File</a>
+          <a :class="{'is-active':currentTab=='elements'}" @click="currentTab='elements'" >Elements</a>
+          
           
         </p>
+        <div class="tab elements-tab" v-show="currentTab=='elements'">
+          <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':editorDataStore.newElementName == key}" @click="selectNewElement(key)">
+            <span class="panel-icon">
+              <font-awesome-icon :icon="el.icon" />
+            </span>
+            {{ el.label }}
+          </a>
+        </div>
+        <div class="tab file-tab" v-show="currentTab=='file'">
+          <p>File name</p>
+          <input type="text" v-model="filename" class="input is-small"/>
+          <div class="size-input">
+            <p>Size</p>x
+            <input type="number" ref="jsonFileInput" v-model="size" class="input is-small" min="0.5"/>
+          </div>
+
+          <button class="button is-small is-fullwidth" @click="saveAsJson">Save</button>
+          <button class="button is-small is-fullwidth" @click="saveAsImage">Save as PNG</button>
+          <label class="button is-small is-fullwidth" for="open_json">
+            Open
+            <input type="file" id="open_json" accept=".json" @change="open"  />
+            
+
+          </label>
+
+
+          
+        </div>
         
-        <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':editorDataStore.newElementName == key}" @click="selectNewElement(key)">
-          <span class="panel-icon">
-            <font-awesome-icon :icon="el.icon" />
-          </span>
-          {{ el.label }}
-        </a>
       
         
-        <div class="panel-block buttons-block">
-          <button class="button is-link is-outlined is-fullwidth">
-            Save
-          </button>
-          
-          <button class="button is-link is-outlined is-fullwidth">
-            Open
-          </button>
-        </div>
+        
+        
       </nav>
       <div class="size-panel">
         <input class="input is-small" type="number" v-model="editorWidth"/>
@@ -179,12 +301,17 @@ function addElement(e)
         <p>{{ editorDataStore.editorZoom }}%</p>
         <button class="button" @click.stop="editorDataStore.zoomin">+</button>
       </div>
-      <svg class="main-canvas" ref="svgCanvas" :height="editorHeight*editorDataStore.zoom" :width="editorWidth*editorDataStore.zoom" @click="addElement">
+      <svg xmlns="http://www.w3.org/2000/svg" class="main-canvas" ref="svgCanvas" :height="editorHeight*editorDataStore.zoom" :width="editorWidth*editorDataStore.zoom" @click="addElement">
 
         <component v-for="element in editorDataStore.currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
         
+        
       </svg>
+      <canvas class="canvas-for-save" :width="editorWidth*editorDataStore.zoom" :height="editorHeight*editorDataStore.zoom" ref="canvasForSave">
+      </canvas>
+      
   </div>
+  
 </template>
 
 <style scoped>

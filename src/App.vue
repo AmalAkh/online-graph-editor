@@ -38,8 +38,9 @@ function movePanel(e)
 
   if(editorDataStore.draggingMode == "edge")
   {
-    editorDataStore.selectedElement.bezierPointX = e.clientX;
-    editorDataStore.selectedElement.bezierPointY = e.clientY;
+    let box = svgCanvas.value.getBoundingClientRect();
+    editorDataStore.selectedElement.bezierPointX = (e.clientX - box.x)/editorDataStore.zoom;
+    editorDataStore.selectedElement.bezierPointY = (e.clientY - box.y)/editorDataStore.zoom;
   }
   if(isPanelMoving.value)
   {

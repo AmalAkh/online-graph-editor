@@ -31,31 +31,11 @@ function startMovingBezierPoint(e)
 }
 const bezierPointX = computed(()=>
 {
-    if(editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == "edge")
-    {
-        return props.element.bezierPointX ;
-    }else if(editorDataStore.selectedElement?.id == props.element.id)
-    {
-        return props.element.bezierPointX
-    }else
-    {
-        return props.element.bezierPointX * editorDataStore.zoom;
-    }
+    return props.element.bezierPointX*editorDataStore.zoom;
 })
 const bezierPointY = computed(()=>
 {
-    if(editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == "edge")
-    {
-        
-        return props.element.bezierPointY;
-    }else if(editorDataStore.selectedElement?.id == props.element.id)
-    {
-        return props.element.bezierPointY
-    }else
-    {
-        
-        return props.element.bezierPointY  * editorDataStore.zoom;
-    }
+    return props.element.bezierPointY*editorDataStore.zoom;
 })
 
 </script>

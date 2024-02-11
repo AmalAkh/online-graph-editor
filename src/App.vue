@@ -147,8 +147,9 @@ const filename = ref("mygraph");
 function saveAsImage()
 {
   
-  let context = canvasForSave.value.getContext("2d");
-
+  const context = canvasForSave.value.getContext("2d");
+  //clear canvas;
+  context.clearRect(0,0, canvasForSave.value.width, canvasForSave.value.height);
   //get svg xml
   let svgXML = svgCanvas.value.outerHTML;
   console.log(svgXML);

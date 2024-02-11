@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import useEditorDataStore from './../stores/editor-data-store';
 import Edge from './../abstractions/edge.js';
+import DirectedEdge from './../abstractions/directed-edge.js';
 
 const editorDataStore = useEditorDataStore();
 
@@ -15,9 +16,21 @@ const props = defineProps({
 
 function select(e)
 {
-    if(editorDataStore.selectedElement != null && editorDataStore.newElementName == "Edge" && props.element.name == "Vertex" && editorDataStore.selectedElement.name == "Vertex")
+    if(editorDataStore.selectedElement != null && (editorDataStore.newElementName == "Edge" || editorDataStore.newElementName == "DirectedEdge") && props.element.name == "Vertex" && editorDataStore.selectedElement.name == "Vertex")
     {
-        let edge = new Edge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
+       
+        let edge;
+        //edge = new Edge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
+        //edge = new DirectedEdge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
+
+        if(editorDataStore.newElementName == "Edge")
+        {
+            edge = new Edge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
+        }else
+        {
+            edge = new DirectedEdge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
+
+        }
         edge.start = editorDataStore.selectedElement;
         edge.end = props.element;
         editorDataStore.currentElements.unshift(edge);
@@ -44,5 +57,5 @@ function getStrokeWidth()
 
 </script>
 <template>
-    <circle @click.stop="select" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="8*editorDataStore.zoom"  fill="black" />
+    <circle @click.stop="select" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  fill="black" />
 </template>

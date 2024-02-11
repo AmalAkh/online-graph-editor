@@ -89,7 +89,7 @@ function selectNewElement(name)
 
   editorDataStore.draggingMode = "new_element";
   editorDataStore.selectedElement = null;
-  
+  console.log(name);
   editorDataStore.newElementName = name;
 }
 //get absolute position without effect of zooming

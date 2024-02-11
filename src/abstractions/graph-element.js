@@ -4,11 +4,12 @@ export default class GraphElement
 {
     
     x = 100;y = 100;
-    componentName = "";
+    componentName = "";//name of the vue component
     id;
     constructor(name, x, y, componentName)
     {
-        this.name = name;
+        
+        this.name = name;//just the name of an element
         this.x = x;
         this.y = y;
         this.componentName = componentName;

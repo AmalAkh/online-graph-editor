@@ -7,8 +7,7 @@ let useEditorDataStore = defineStore("editor-data-store",
     {
         editorZoom:(state)=>
         {
-            
-            
+
             return Math.round(state.zoom*100)
         },
         editorWidth:(state)=>

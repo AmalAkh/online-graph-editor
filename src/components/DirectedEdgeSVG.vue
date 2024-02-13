@@ -60,7 +60,7 @@ const triangleRotationAngle = computed(()=>
     
     <path class="edge" stroke="black" :class="{'selected':editorDataStore.selectedElement?.id == props.element.id}"  @click.stop="select"  :d="`M ${element.x[0]*editorDataStore.zoom} ${element.y[0]*editorDataStore.zoom} Q ${element.bezierPointX*editorDataStore.zoom} ${element.bezierPointY*editorDataStore.zoom} ${element.x[1]*editorDataStore.zoom} ${element.y[1]*editorDataStore.zoom}`" :stroke-width="4*editorDataStore.zoom" fill="none" />
     <polygon  :class="{'selected':editorDataStore.selectedElement?.id == props.element.id}" :points="triangleCoords" fill="black" :transform="`rotate(${triangleRotationAngle},${props.element.x[1]},${props.element.y[1]})`" />
-    <circle class="bezier-point" :class="{'active':editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == 'edge'}" @mousedown="startMovingBezierPoint" v-show="editorDataStore.selectedElement?.id == element.id"  :cx="bezierPointX" :cy="bezierPointY" stroke="gray"  r="7"  fill="white" />
+    <circle class="bezier-point" :class="{'active':editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == 'edge'}" @mousedown="startMovingBezierPoint" v-if="editorDataStore.selectedElement?.id == element.id"  :cx="bezierPointX" :cy="bezierPointY" stroke="gray"  r="7"  fill="white" />
 </template>
 <style lang="scss" scoped>
 .bezier-point

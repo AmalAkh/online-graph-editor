@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, onUpdated } from 'vue';
 import availableElements from './abstractions/available-elements';
 
 import Vertex from './abstractions/vertex';
@@ -144,15 +144,36 @@ const size = ref(1);
 const filename = ref("mygraph");
 
 
-function saveAsImage()
+function removeTemporaryControls()
 {
+  editorDataStore.selectedElement = null;
+  return new Promise((resolve, reject)=>
+  {
+    let intervalId = setInterval(()=>
+    {
+      
+      if(document.getElementsByClassName("bezier-point").length == 0)
+      {
+        resolve(0);
+        clearInterval(intervalId);
+      }
+    }, 10);
+  });
+}
+async function saveAsImage()
+{
+  
+  
+  //we need to wait until all temporary control will be removed (for example Bezier points controls)
+  await removeTemporaryControls();
+  
   
   const context = canvasForSave.value.getContext("2d");
   //clear canvas;
   context.clearRect(0,0, canvasForSave.value.width, canvasForSave.value.height);
   //get svg xml
   let svgXML = svgCanvas.value.outerHTML;
-  console.log(svgXML);
+  console.log("svg xml saved");
   let blob = new Blob([svgXML], {type:"image/svg+xml"});
 
   //create an image to draw it on canvas
@@ -161,7 +182,7 @@ function saveAsImage()
 
   //apply zoom 
   editorDataStore.zoom = size.value;
-  editorDataStore.selectedElement = null;
+  
   //hide the svg to prevent user from seeing temporary sized up version of svg
   svgCanvas.value.style.display = "none";
   let blobUrl = URL.createObjectURL(blob);

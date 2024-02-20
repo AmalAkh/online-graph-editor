@@ -13,16 +13,22 @@ const props = defineProps({
     }
 });
 
+function startMovingVertex(e)
+{
+    if(editorDataStore.newElementName != "Edge" && editorDataStore.newElementName != "DirectedEdge")
+    {
+        editorDataStore.selectedElement = props.element;
+        editorDataStore.draggingMode = "moving_el";
+    }
+}
 
 function select(e)
 {
-    if(editorDataStore.selectedElement != null && (editorDataStore.newElementName == "Edge" || editorDataStore.newElementName == "DirectedEdge") && props.element.name == "Vertex" && editorDataStore.selectedElement.name == "Vertex")
+    if(editorDataStore.selectedElement != null && (editorDataStore.newElementName == "Edge" || editorDataStore.newElementName == "DirectedEdge") && props.element.name == "Vertex" && editorDataStore.selectedElement.name == "Vertex" && editorDataStore.selectedElement?.id != props.element.id )
     {
        
         let edge;
-        //edge = new Edge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
-        //edge = new DirectedEdge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
-
+       
         if(editorDataStore.newElementName == "Edge")
         {
             edge = new Edge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
@@ -31,15 +37,18 @@ function select(e)
             edge = new DirectedEdge(editorDataStore.selectedElement.x, editorDataStore.selectedElement.y,props.element.x,props.element.y);
 
         }
-        edge.start = editorDataStore.selectedElement;
-        edge.end = props.element;
+        edge.start = editorDataStore.selectedElement.id;
+        edge.end = props.element.id;
+        
         editorDataStore.currentElements.unshift(edge);
-        editorDataStore.selectedElement.addConnection(props.element.id, edge);
-        props.element.addConnection(editorDataStore.selectedElement.id, edge);
+        editorDataStore.selectedElement.addConnection(props.element.id, edge.id);
+        props.element.addConnection(editorDataStore.selectedElement.id, edge.id);
         
     }
+    //debugger;
     if(editorDataStore.selectedElement?.id == props.element.id)
     {
+       
         editorDataStore.$patch({selectedElement:null});
     }else
     {
@@ -57,5 +66,5 @@ function getStrokeWidth()
 
 </script>
 <template>
-    <circle @click.stop="select" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  fill="black" />
+    <circle @click.stop="select" @pointerdown="startMovingVertex" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  fill="black" />
 </template>

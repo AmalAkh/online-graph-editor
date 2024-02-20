@@ -8,7 +8,9 @@ export default function(url, name="file")
 
     document.body.append(a);
     a.style.display = "none";
+    
     a.click();
     a.remove();
+    URL.revokeObjectURL(url);
     
 }

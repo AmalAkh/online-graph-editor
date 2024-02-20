@@ -29,6 +29,12 @@ function startMovingBezierPoint(e)
     //editorDataStore.selectedElement.bezierPointX = e.clientX;
     //editorDataStore.selectedElement.bezierPointY = e.clientY;
 }
+function stopMovingBezierPoint(e)
+{
+    editorDataStore.draggingMode = "";
+    //editorDataStore.selectedElement.bezierPointX = e.clientX;
+    //editorDataStore.selectedElement.bezierPointY = e.clientY;
+}
 const bezierPointX = computed(()=>
 {
     return props.element.bezierPointX*editorDataStore.zoom;
@@ -43,7 +49,7 @@ const bezierPointY = computed(()=>
     
     
     <path class="edge" stroke="black" :class="{'selected':editorDataStore.selectedElement?.id == props.element.id}"  @click.stop="select"  :d="`M ${element.x[0]*editorDataStore.zoom} ${element.y[0]*editorDataStore.zoom} Q ${element.bezierPointX*editorDataStore.zoom} ${element.bezierPointY*editorDataStore.zoom} ${element.x[1]*editorDataStore.zoom} ${element.y[1]*editorDataStore.zoom}`" :stroke-width="4*editorDataStore.zoom" fill="none" />
-    <circle class="bezier-point" :class="{'active':editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == 'edge'}" @mousedown="startMovingBezierPoint" v-if="editorDataStore.selectedElement?.id == element.id"  :cx="bezierPointX" :cy="bezierPointY" stroke="gray"  r="5"  fill="white" />
+    <circle class="bezier-point"  :class="{'active':editorDataStore.selectedElement?.id == props.element.id && editorDataStore.draggingMode == 'edge'}" @click.stop="" @mouseup.stop="stopMovingBezierPoint"  @mousedown.stop="startMovingBezierPoint" v-if="editorDataStore.selectedElement?.id == element.id"  :cx="bezierPointX" :cy="bezierPointY" stroke="gray"  r="5"  fill="white" />
 </template>
 <style lang="scss" scoped>
 .bezier-point

@@ -7,6 +7,7 @@ export default function(elements)
     {
         if(el.name == "Vertex")
         {
+            
             castedElements.push(Vertex.castFromObject(el));
         }else
         {

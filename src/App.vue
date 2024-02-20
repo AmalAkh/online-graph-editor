@@ -42,6 +42,41 @@ function movePanel(e)
     editorDataStore.selectedElement.bezierPointX = (e.clientX - box.x)/editorDataStore.zoom;
     editorDataStore.selectedElement.bezierPointY = (e.clientY - box.y)/editorDataStore.zoom;
   }
+  if(editorDataStore.draggingMode == "moving_el" && editorDataStore?.selectedElement?.name == "Vertex")
+  {
+    let box = svgCanvas.value.getBoundingClientRect();
+    editorDataStore.selectedElement.x = (e.clientX - box.x)/editorDataStore.zoom;
+    editorDataStore.selectedElement.y = (e.clientY - box.y)/editorDataStore.zoom;
+    for(let [key,val] of editorDataStore.selectedElement.connectedVertices)
+    {
+      for(let edgeId of val)
+      {
+        
+        let edge = editorDataStore.currentElements.find((item=>
+        {
+          return item.id == edgeId;
+        }))
+       
+       
+        if(edge.start == editorDataStore.selectedElement.id)
+        {
+          //debugger;
+          edge.x[0] = editorDataStore.selectedElement.x;
+          edge.y[0] = editorDataStore.selectedElement.y;
+         // break;
+
+        }else
+        {
+          //debugger;
+
+          edge.x[1] = editorDataStore.selectedElement.x;
+          edge.y[1] = editorDataStore.selectedElement.y;
+         // break;
+
+        }
+      }
+    }
+  }
   if(isPanelMoving.value)
   {
    
@@ -105,10 +140,9 @@ const editorHeight = ref(400);
 function addElement(e)
 {
   
-  if(editorDataStore.newElementName == "edge")
+  if(editorDataStore.newElementName == "Edge" || editorDataStore.newElementName == "DirectedEdge")
   {
-    //if it is edge cant add to empty space
-    editorDataStore.newElementName = "";
+    editorDataStore.selectedElement = null;
     
   }
   
@@ -128,12 +162,13 @@ function addElement(e)
         
       break;
     }
-  }else if(editorDataStore.draggingMode != "edge")
+  }else if(editorDataStore.draggingMode != "Edge")
   {
     editorDataStore.selectedElement = null;
   }else
   {
     editorDataStore.draggingMode = "";
+    
   }
   
 }
@@ -208,24 +243,24 @@ async function saveAsImage()
 
 function saveAsJson()
 {
-  let confObj = {canvasWidth:editorWidth.value, canvasHeight:editorHeight.value,elements:editorDataStore.currentElements}
+  let confObj = {canvasWidth:editorWidth.value, canvasHeight:editorHeight.value,elements:editorDataStore.currentElements.map((el)=>
+    {
+      if(el.name == "Vertex")
+      {
+        let newEl = Object.assign({}, el);
+        
+        newEl.connectedVertices = Object.fromEntries(el.connectedVertices);
+        return newEl;
+      }
+      return el;
+    })}
   let blob = new Blob([JSON.stringify(confObj)], {type:"application/json"});
   downloadByDataURL(URL.createObjectURL(blob), filename.value);
 }
 
 
 const requiredFields = ["canvasWidth", "canvasHeight", "elements"]
-function addConnection(vertexId, edge)
-    {
-        if(this.connectedVertices.has(vertexId))
-        {
-            
-            this.connectedVertices.set(vertexId, [...this.connectedVertices.get(vertexId), edge]);
-        }else
-        {
-            this.connectedVertices.set(vertexId, [edge]);
-        }
-    }
+
 function open(e)
 {
   
@@ -280,6 +315,12 @@ function open(e)
           
         </p>
         <div class="tab elements-tab" v-show="currentTab=='elements'">
+          <a class="panel-block"  :class="{'selected':editorDataStore.newElementName == ''}" @click="selectNewElement('')">
+            <span class="panel-icon">
+              <font-awesome-icon :icon="['fas', 'arrow-pointer']" />
+            </span>
+            Cursor
+          </a>
           <a class="panel-block" v-for="[key, el] in availableElements" :class="{'selected':editorDataStore.newElementName == key}" @click="selectNewElement(key)">
             <span class="panel-icon">
               <font-awesome-icon :icon="el.icon" />
@@ -324,7 +365,7 @@ function open(e)
         <p>{{ editorDataStore.editorZoom }}%</p>
         <button class="button" @click.stop="editorDataStore.zoomin">+</button>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" class="main-canvas" ref="svgCanvas" :height="editorHeight*editorDataStore.zoom" :width="editorWidth*editorDataStore.zoom" @click="addElement">
+      <svg xmlns="http://www.w3.org/2000/svg"  class="main-canvas" ref="svgCanvas" :height="editorHeight*editorDataStore.zoom" :width="editorWidth*editorDataStore.zoom" @click="addElement">
 
         <component v-for="element in editorDataStore.currentElements" :is="availableElements.get(element.name).component" :element="element"></component>
         

@@ -2,7 +2,11 @@ $control-radius-small:0.5rem;
 
 @import "bulma/bulma.sass";
 
-
+$panel-tab-border-bottom:2px;
+.panel-tabs a
+{
+    transition: bottom-border-width 1s;
+}
 html,body
 {
     height:100%;

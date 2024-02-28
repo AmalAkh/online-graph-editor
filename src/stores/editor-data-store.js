@@ -22,6 +22,10 @@ let useEditorDataStore = defineStore("editor-data-store",
     },
     actions:
     {
+        setSelectedElementProperty(name,e)
+        {
+            this.selectedElement.properties[name].value = e.target.value;
+        },
         zoomin()
         {
             this.zoom+=0.1;

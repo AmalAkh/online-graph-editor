@@ -1,3 +1,4 @@
+import ElementProperty from "./element-property";
 import GraphElement from "./graph-element";
 export default class Vertex extends GraphElement
 {
@@ -6,6 +7,11 @@ export default class Vertex extends GraphElement
     {
         super("Vertex",x,y, "VertexSVG");
         this.connectedVertices = new Map();
+
+        this.properties["name"] = new ElementProperty("name", "Name", String(this.id), "text");
+        this.properties["color"] = new ElementProperty("color", "Color", "#424242", "color");
+        
+
 
     }
     static castFromObject(obj)

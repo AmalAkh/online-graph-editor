@@ -124,7 +124,7 @@ function selectNewElement(name)
 
   editorDataStore.draggingMode = "new_element";
   editorDataStore.selectedElement = null;
-  console.log(name);
+  
   editorDataStore.newElementName = name;
 }
 //get absolute position without effect of zooming
@@ -309,8 +309,10 @@ function open(e)
         </div>
         
         <p class="panel-tabs">
-          <a :class="{'is-active':currentTab=='file'}" @click="currentTab='file'" >File</a>
+          <a :class="{'is-active':currentTab=='file' || (currentTab == 'properties' && editorDataStore.selectedElement == null )}" @click="currentTab='file'" >File</a>
           <a :class="{'is-active':currentTab=='elements'}" @click="currentTab='elements'" >Elements</a>
+          <a :class="{'is-active':currentTab=='properties'}" v-if="editorDataStore.selectedElement != null" @click="currentTab='properties'" >Properties</a>
+
           
           
         </p>
@@ -347,6 +349,13 @@ function open(e)
 
 
           
+        </div>
+
+        <div class="tab properties-tab" v-show="currentTab=='properties'">
+            <div class="property-input" v-for="(property, key) in editorDataStore?.selectedElement?.properties">
+              <label>{{ property.label }}</label>
+              <input class="input is-small" v-model="property.value" :type="property.type" @input="editorDataStore.setSelectedElementProperty(key, $event)"/>
+            </div>
         </div>
         
       

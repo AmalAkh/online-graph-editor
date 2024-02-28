@@ -49,7 +49,7 @@ function select(e)
     if(editorDataStore.selectedElement?.id == props.element.id)
     {
        
-        editorDataStore.$patch({selectedElement:null});
+        //editorDataStore.$patch({selectedElement:null});
     }else
     {
         editorDataStore.$patch({selectedElement:props.element});
@@ -57,6 +57,10 @@ function select(e)
     
     
     
+}
+function stopMovingVertex()
+{
+    editorDataStore.draggingMode = "";
 }
 function getStrokeWidth()
 {
@@ -66,5 +70,5 @@ function getStrokeWidth()
 
 </script>
 <template>
-    <circle @click.stop="select" @pointerdown="startMovingVertex" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  fill="black" />
+    <circle @click.stop="select" @pointerup="stopMovingVertex" @pointerdown="startMovingVertex" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  :fill="props.element.properties['color'].value" />
 </template>

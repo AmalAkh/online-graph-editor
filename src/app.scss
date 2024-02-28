@@ -126,6 +126,26 @@
         display: none;
       }
     }
+    .properties-tab
+    {
+      padding: 10px;
+      .property-input
+      {
+        &:first-child
+        {
+          margin-top: 0px;
+        }
+        margin-top: 10px;
+        label
+        {
+          margin-bottom: 8px;
+        }
+        input
+        {
+          display: block;
+        }
+      }
+    }
     
     
     

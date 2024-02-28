@@ -6,6 +6,7 @@ export default class GraphElement
     x = 100;y = 100;
     componentName = "";//name of the vue component
     id;
+    properties = {};
     constructor(name, x, y, componentName)
     {
         

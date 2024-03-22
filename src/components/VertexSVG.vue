@@ -4,6 +4,7 @@ import useEditorDataStore from './../stores/editor-data-store';
 import Edge from './../abstractions/edge.js';
 import DirectedEdge from './../abstractions/directed-edge.js';
 
+
 const editorDataStore = useEditorDataStore();
 
 const props = defineProps({
@@ -68,7 +69,15 @@ function getStrokeWidth()
     return editorDataStore.selectedElement?.id == props.element.id ? 3 : 0;
 }
 
+
 </script>
 <template>
+    <text :x="props.element.x-10" ref="vertexNameText" :y="props.element.y-24" class="vertex-name">{{props.element.properties["name"].value}}</text>
     <circle @click.stop="select" @pointerup="stopMovingVertex" @pointerdown="startMovingVertex" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  :fill="props.element.properties['color'].value" />
 </template>
+<style lang="scss">
+.vertex-name
+{
+    color:black;
+}
+</style>

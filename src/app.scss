@@ -150,4 +150,19 @@
     
     
   }
+  
+@media screen and (max-width:1024px) 
+{
+  .instruments-panel
+  {
+    width:20%;
+  }
+}
+@media screen and (max-width:768px) 
+{
+  .instruments-panel
+  {
+    width:30%;
+  }
+}
 

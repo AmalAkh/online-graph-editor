@@ -10,6 +10,7 @@ export default class Vertex extends GraphElement
 
         this.properties["name"] = new ElementProperty("name", "Name", String(this.id), "text");
         this.properties["color"] = new ElementProperty("color", "Color", "#424242", "color");
+        this.properties["text-color"] = new ElementProperty("text-color", "Text color", "#424242", "color");
         
 
 

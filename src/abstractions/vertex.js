@@ -3,14 +3,29 @@ import GraphElement from "./graph-element";
 export default class Vertex extends GraphElement
 {
     connectedVertices;
+    static _nextChar = 64;
+    static _nameCharCount = 1;
+    static getNextName()
+    {
+        if(Vertex._nextChar+1 > 90)
+        {
+
+            Vertex._nextChar = 65;
+            Vertex._nameCharCount +=1;
+        }else
+        {
+            Vertex._nextChar+=1;
+        }
+        return String.fromCharCode(Vertex._nextChar).repeat(Vertex._nameCharCount);
+    }
     constructor(x,y)
     {
         super("Vertex",x,y, "VertexSVG");
         this.connectedVertices = new Map();
-
-        this.properties["name"] = new ElementProperty("name", "Name", String(this.id), "text");
-        this.properties["color"] = new ElementProperty("color", "Color", "#424242", "color");
-        this.properties["text-color"] = new ElementProperty("text-color", "Text color", "#424242", "color");
+        
+        this.properties["name"] = new ElementProperty("name", "Name", Vertex.getNextName(), "text");
+        this.properties["color"] = new ElementProperty("color", "Color", "#000000", "color");
+        this.properties["text-color"] = new ElementProperty("text-color", "Text color", "#000000", "color");
         
 
 

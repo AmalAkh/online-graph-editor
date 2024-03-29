@@ -72,8 +72,8 @@ function getStrokeWidth()
 
 </script>
 <template>
-    <text id="vertex-name-text" :fill="props.element.properties['text-color'].value" :x="props.element.x-10"  ref="vertexNameText" :y="props.element.y-24" class="vertex-name">{{props.element.properties["name"].value}}</text>
-    <circle @click.stop="select" @pointerup="stopMovingVertex" @pointerdown="startMovingVertex" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()" :r="7*editorDataStore.zoom"  :fill="props.element.properties['color'].value" />
+    <text id="vertex-name-text" :fill="props.element.properties['text-color'].value" :x="editorDataStore.zoom * (props.element.x-10)"  ref="vertexNameText" :y="editorDataStore.zoom * (props.element.y-16)" class="vertex-name" :style="{'font-size':(1.5*editorDataStore.zoom).toString()+'rem'}">{{props.element.properties["name"].value}}</text>
+    <circle @click.stop="select" @pointerup="stopMovingVertex" @pointerdown="startMovingVertex" :cx="editorDataStore.zoom * element.x" :cy="editorDataStore.zoom*element.y" stroke="red" :stroke-width="getStrokeWidth()*editorDataStore.zoom" :r="7*editorDataStore.zoom"  :fill="props.element.properties['color'].value" />
 </template>
 <style lang="scss" scoped>
 .vertex-name
@@ -83,6 +83,7 @@ function getStrokeWidth()
 #vertex-name-text
 {
     font-family: Arial, Helvetica, sans-serif;
+    
 }
 
 </style>

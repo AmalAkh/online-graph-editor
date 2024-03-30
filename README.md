@@ -14,5 +14,7 @@ npm run preview
 ```
 
 ## To do
++ Implement element removal
 + Implement simple graph algorithms
++ Implement redo/undo
 

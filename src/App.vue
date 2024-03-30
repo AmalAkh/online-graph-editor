@@ -301,7 +301,7 @@ function open(e)
     <nav ref="panel" class="panel is-info instruments-panel" :style="{top:`${panelY}px`, left:`${panelX}px`}">
       <div class="panel-heading">
           <p>
-          test
+          
           </p>
           <span ref="dragElement" class="drag-element" @dragstart="test"  @mousedown.stop="startMovingPanel" >
             <font-awesome-icon icon="grip-vertical" />

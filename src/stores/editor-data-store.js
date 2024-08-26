@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 let useEditorDataStore = defineStore("editor-data-store", 
 {
-    state:()=>({selectedElement:null, currentElements:[], draggingMode:"", newElementName:"", zoom:1}),
+    state:()=>({selectedElement:null, currentElements:[], draggingMode:"", previousDraggingMode:"", newElementName:"", zoom:1}),
     getters:
     {
         editorZoom:(state)=>
@@ -34,7 +34,12 @@ let useEditorDataStore = defineStore("editor-data-store",
         zoomout()
         {
             this.zoom-=0.1
+        },
+        removeElement(elId)
+        {
+            this.currentElements = this.currentElements.filter((el)=>el.id != elId)
         }
+        
     }
 });
 

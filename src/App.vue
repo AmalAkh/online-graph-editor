@@ -116,6 +116,18 @@ onMounted(()=>
 {
     editorDataStore.currentEditorHeight = document.documentElement.clientHeight;
     editorDataStore.currentEditorWidth = document.documentElement.clientWidth;
+    document.addEventListener("keyup", (e)=>
+    {
+      console.log(editorDataStore.draggingMode)
+      if(e.code == "Backspace" && editorDataStore.selectedElement)
+      {
+        for(let edgeId of editorDataStore.selectedElement.connectedVertices.values())
+        {
+          editorDataStore.removeElement(edgeId);
+        }
+        editorDataStore.removeElement(editorDataStore.selectedElement.id);
+      }
+    })
 })
 
 
@@ -294,6 +306,8 @@ function open(e)
   
   
 }
+
+
 </script>
 
 <template>

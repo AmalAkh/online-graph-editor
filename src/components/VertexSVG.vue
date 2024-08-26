@@ -19,6 +19,7 @@ function startMovingVertex(e)
     if(editorDataStore.newElementName != "Edge" && editorDataStore.newElementName != "DirectedEdge")
     {
         editorDataStore.selectedElement = props.element;
+        
         editorDataStore.draggingMode = "moving_el";
     }
 }
@@ -46,15 +47,9 @@ function select(e)
         props.element.addConnection(editorDataStore.selectedElement.id, edge.id);
         
     }
-    //debugger;
-    if(editorDataStore.selectedElement?.id == props.element.id)
-    {
-       
-        //editorDataStore.$patch({selectedElement:null});
-    }else
-    {
-        editorDataStore.$patch({selectedElement:props.element});
-    }
+    
+    editorDataStore.$patch({selectedElement:props.element});
+    
     
     
     
@@ -62,6 +57,11 @@ function select(e)
 function stopMovingVertex()
 {
     editorDataStore.draggingMode = "" ;
+    if(editorDataStore.newElementName != "Edge" && editorDataStore.newElementName != "DirectedEdge")
+    {
+        editorDataStore.newElementName = "";
+    }
+    
 }
 function getStrokeWidth()
 {

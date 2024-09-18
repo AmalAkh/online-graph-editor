@@ -10,6 +10,8 @@ git clone https://github.com/AmalAkh/online-graph-editor
 
 cd online-graph-editor
 
+npm install
+
 npm run preview
 ```
 

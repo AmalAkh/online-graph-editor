@@ -6,5 +6,5 @@ export default defineConfig({
   plugins: [vue()],
   base:"",
   server:{port:8000},
-  preview:{port:8001}
+  preview:{host:true,port:8001}
 })

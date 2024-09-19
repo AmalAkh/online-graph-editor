@@ -12,6 +12,8 @@ cd online-graph-editor
 
 npm install
 
+npm run build
+
 npm run preview
 ```
 
